@@ -3,8 +3,7 @@
 function showHelp() {
 # `cat << EOF` This means that cat should stop reading when EOF is detected
 cat << EOF
-Usage: ./rhle.bash [options]
-Where options are:
+Usage: ./coolpbx.sh
 
 -h,	-help,		--help                  	Display help
 -v,	-verbose,	--verbose				Run script in verbose mode. Will print out each step of execution.
@@ -122,6 +121,34 @@ function is_localhost() {
 	case "${_ip}" in
 		localhost|127.0.0.1|::1|0:0:0:0:0:0:0:1)
 			_result=1
+			;;
+	esac
+	echo ${_result}
+}
+
+function build_connection_string() {
+	_result='';
+
+	case "${database_type}" in
+		mysql|mariadb)
+			_result="mariadb://Server=${database_host}; Port=${database_port}; Database=${database_name}; Uid=${database_username}; Pwd=${database_username_password}"
+			;;
+		pgsql)
+			_result="pgsql://hostaddr=${database_host} port=${database_port} dbname=${database_name} user=${database_username} password=${database_username_password} options=''"
+			;;
+	esac
+	echo ${_result}
+}
+
+function build_freeswitch_connection_string() {
+	_result='';
+
+	case "${database_type}" in
+		mysql|mariadb)
+			_result="mariadb://Server=${database_host}; Port=${database_port}; Database=freeswitch; Uid=${database_username}; Pwd=${database_username_password}"
+			;;
+		pgsql)
+			_result="pgsql://hostaddr=${database_host} port=${database_port} dbname=freeswitch user=${database_username} password=${database_username_password} options=''"
 			;;
 	esac
 	echo ${_result}
@@ -374,6 +401,35 @@ xml_handler.number_as_presence_id = true
 error.reporting = 'E_ALL ^ E_NOTICE ^ E_WARNING'
 EOF
 
+case "${database_type}" in
+	mysql|mariadb)
+		cat <<'EOF' > /etc/odbc.ini
+[freeswitch]
+Driver   = MariaDB
+SERVER   = {database_host}
+PORT     = {database_port}
+DATABASE = freeswitch
+OPTION  = 67108864
+;Socket   = /var/lib/mysql/mysql.sock
+threading=0
+MaxLongVarcharSize=65536
+
+[fusionpbx]
+Driver   = MariaDB
+SERVER   = {database_host}
+PORT     = {database_port}
+DATABASE = {database_name}
+OPTION  = 67108864
+Socket   = /var/lib/mysql/mysql.sock
+threading=0
+EOF
+		;;
+	pgsql)
+		cat <<'EOF' > /etc/odbc.ini
+EOF
+		;;
+esac
+
 sed -i /etc/fusionpbx/config.php -e s:"{database_type}:${database_type}:"
 sed -i /etc/fusionpbx/config.php -e s:"{database_host}:${database_host}:"
 sed -i /etc/fusionpbx/config.php -e s:"{database_port}:${database_port}:"
@@ -387,6 +443,10 @@ sed -i /etc/fusionpbx/config.conf -e s:"{database_port}:${database_port}:"
 sed -i /etc/fusionpbx/config.conf -e s:"{database_name}:${database_name}:"
 sed -i /etc/fusionpbx/config.conf -e s:"{database_username}:${database_username}:"
 sed -i /etc/fusionpbx/config.conf -e s:"{database_password}:${database_username_password}:"
+
+sed -i /etc/odbc.ini -e s:"{database_host}:${database_host}:"
+sed -i /etc/odbc.ini -e s:"{database_port}:${database_port}:"
+sed -i /etc/odbc.ini -e s:"{database_name}:${database_name}:"
 
 _is_local_db=$(is_localhost ${database_host})
 
@@ -550,7 +610,16 @@ case "${database_type}" in
 		;;
 esac
 
-
+_dsn=$(build_freeswitch_connection_string)
+sed -i /etc/freeswitch/vars.xml -e s"|{dsn}|${_dsn}|"
+case "${database_type}" in
+	mysql|mariadb)
+		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|freeswitch:${database_username}:${database_username_password}|"
+		;;
+	pgsql)
+		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|${_dsn}|"
+		;;
+esac
 xml_cdr_username=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
 xml_cdr_password=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_http_protocol}:http:"
@@ -558,7 +627,6 @@ sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{domain_name}:127
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_project_path}::"
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_user}:$xml_cdr_username:"
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_pass}:$xml_cdr_password:"
-
 
 pushd /var/www/CoolPBX
 	php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
