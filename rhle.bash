@@ -3,7 +3,8 @@
 function showHelp() {
 # `cat << EOF` This means that cat should stop reading when EOF is detected
 cat << EOF
-Usage: ./coolpbx.sh
+Usage: ./rhle.bash [options]
+Where options are:
 
 -h,	-help,		--help                  	Display help
 -v,	-verbose,	--verbose				Run script in verbose mode. Will print out each step of execution.
