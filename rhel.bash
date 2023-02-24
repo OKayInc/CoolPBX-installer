@@ -635,11 +635,11 @@ popd
 rm -f /var/lib/php/session/*
 
 echo "Configuring Crontabs..."
-echo << EOF > /etc/cron.hourly/coolpbx-fs
+cat << EOF > /etc/cron.hourly/coolpbx-fs
 #!/bin/bash
-/bin/chown freeswitch:daemon /var/lib/freeswitch/{recordings,storage} -Rf
-/bin/find  /var/lib/freeswitch/{recordings,storage} -type d -exec chmod 2770 {} \;
-/bin/find  /var/lib/freeswitch/{recordings,storage} -type D -exec chmod 0660 {} \;
+/bin/chown freeswitch:daemon /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ -Rf
+/bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ -type d -exec chmod 2770 {} \;
+/bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ -type D -exec chmod 0660 {} \;
 EOF
 chmod +x /etc/cron.hourly/coolpbx-fs
 
