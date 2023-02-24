@@ -634,6 +634,15 @@ popd
 
 rm -f /var/lib/php/session/*
 
+echo "Configuring Crontabs..."
+echo << EOF > /etc/cron.hourly/coolpbx-fs
+#!/bin/bash
+/bin/chown freeswitch:daemon /var/lib/freeswitch/{recordings,storage} -Rf
+/bin/find  /var/lib/freeswitch/{recordings,storage} -type d -exec chmod 2770 {} \;
+/bin/find  /var/lib/freeswitch/{recordings,storage} -type D -exec chmod 0660 {} \;
+EOF
+chmod +x /etc/cron.hourly/coolpbx-fs
+
 echo "Configuring Fail2ban..."
 cat /usr/share/doc/fusionpbx-fail2ban-rules/README.fusionpbx-fail2ban-rules.txt /usr/share/doc/freeswitch-fail2ban-rules/README.freeswitch-fail2ban-rules.txt > /etc/fail2ban/jail.local
 
