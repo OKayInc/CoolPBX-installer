@@ -640,6 +640,7 @@ rm -f /var/lib/php/session/*
 echo "Configuring Crontabs..."
 cat << EOF > /etc/cron.hourly/coolpbx-fs
 #!/bin/bash
+cd /var/www/CoolPBX && /usr/bin/php pull_vars_xml.php && /usr/bin/fs_cli -x 'reloadxml'
 /bin/chown freeswitch:daemon /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ /etc/freeswitch -Rf
 /bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ /etc/freeswitch -type d -exec chmod 2770 {} \;
 /bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ /etc/freeswitch -type f -exec chmod 0664 {} \;
