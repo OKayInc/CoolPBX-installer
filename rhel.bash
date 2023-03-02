@@ -333,6 +333,9 @@ chown ${_chopt} freeswitch:daemon /usr/share/freeswitch
 chown ${_chopt} freeswitch:daemon /var/log/freeswitch
 chown ${_chopt} freeswitch:daemon /var/run/freeswitch
 
+/bin/find  /etc/freeswitch -type d -exec chmod 2770 {} \;
+/bin/find  /etc/freeswitch -type f -exec chmod 0664 {} \;
+
 cat <<'EOF' > /etc/fusionpbx/config.php
 <?php
         //set the database type
@@ -637,9 +640,9 @@ rm -f /var/lib/php/session/*
 echo "Configuring Crontabs..."
 cat << EOF > /etc/cron.hourly/coolpbx-fs
 #!/bin/bash
-/bin/chown freeswitch:daemon /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ -Rf
-/bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ -type d -exec chmod 2770 {} \;
-/bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ -type D -exec chmod 0660 {} \;
+/bin/chown freeswitch:daemon /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ /etc/freeswitch -Rf
+/bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ /etc/freeswitch -type d -exec chmod 2770 {} \;
+/bin/find  /var/lib/freeswitch/{recordings,storage} /usr/share/freeswitch/sounds/ /etc/freeswitch -type f -exec chmod 0664 {} \;
 EOF
 chmod +x /etc/cron.hourly/coolpbx-fs
 
