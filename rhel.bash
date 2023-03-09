@@ -53,7 +53,7 @@ function setDefaults() {
 		export database_type=mysql
 	else
 		case "${database_type}" in
-			mariadb)
+			mariadb|mysql)
 				_type=mysql
 				;;
 			postgresql|postgres)
