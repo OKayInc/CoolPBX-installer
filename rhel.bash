@@ -570,6 +570,7 @@ pushd /var/www/CoolPBX
 			;;
 	esac
 
+	echo 'Upgrading domains...'
 	php /var/www/CoolPBX/core/upgrade/upgrade_domains.php
 popd
 
