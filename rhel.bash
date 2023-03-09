@@ -656,6 +656,7 @@ systemctl enable php-fpm
 systemctl enable memcached
 systemctl enable freeswitch
 systemctl enable fail2ban
+systemctl disable firewalld
 
 echo "Restarting services..."
 systemctl restart httpd
@@ -663,6 +664,7 @@ systemctl restart php-fpm
 systemctl restart memcached
 systemctl restart freeswitch
 systemctl restart fail2ban
+systemctl stop firewalld
 
 cat << EOF
 Your CoolPBX is installed, please take note of the following:
