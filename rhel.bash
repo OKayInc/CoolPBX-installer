@@ -105,10 +105,6 @@ function setDefaults() {
 		export database_admin_username=${_admin}
 	fi
 
-	if [ .$database_admin_username_password = .'' ]; then
-		export database_admin_username_password=${database_username_password}
-	fi
-
 	if [ .$slave = .'' ]; then
 		export slave=0
 	fi
