@@ -65,7 +65,7 @@ function setDefaults() {
 	fi
 
 	if [ .$database_host = .'' ]; then
-		export database_host=127.0.0.1
+		export database_host=localhost
 	fi
 
 	if [ .$database_port = .'' ]; then
