@@ -488,6 +488,7 @@ case "${database_type}" in
 			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
 			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
 		done
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="FLUSH PRIVILEGES"
 		;;
 	pgsql)
 		if [ .$_is_local_db = '.1' ]; then
