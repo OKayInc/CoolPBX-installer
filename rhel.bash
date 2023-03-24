@@ -319,6 +319,19 @@ else
 	_cpopt='-Rf'
 	_chopt='-Rf'
 fi
+
+_dsn=$(build_freeswitch_connection_string)
+case "${database_type}" in
+	mysql|mariadb)
+		_odbc_dsn="freeswitch:${database_username}:${database_username_password}"
+		;;
+	pgsql)
+		_odbc_dsn="${_dsn}"
+		;;
+esac
+sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{dsn}|${_dsn}|"
+sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{odbc-dsn}|${_odbc_dsn}|"
+
 cp ${_cpopt} /var/www/CoolPBX/resources/templates/conf/* /etc/freeswitch
 
 chown ${_chopt} freeswitch:daemon /etc/freeswitch
@@ -330,16 +343,6 @@ chown ${_chopt} freeswitch:daemon /var/run/freeswitch
 /bin/find  /etc/freeswitch -type d -exec chmod 2770 {} \;
 /bin/find  /etc/freeswitch -type f -exec chmod 0664 {} \;
 
-_dsn=$(build_freeswitch_connection_string)
-sed -i /etc/freeswitch/vars.xml -e s"|{dsn}|${_dsn}|"
-case "${database_type}" in
-	mysql|mariadb)
-		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|freeswitch:${database_username}:${database_username_password}|"
-		;;
-	pgsql)
-		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|${_dsn}|"
-		;;
-esac
 
 #cat <<'EOF' > /etc/fusionpbx/config.php
 #<?php
