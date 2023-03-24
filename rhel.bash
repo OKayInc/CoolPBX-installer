@@ -1,7 +1,6 @@
 #!/bin/bash
 
 function showHelp() {
-# `cat << EOF` This means that cat should stop reading when EOF is detected
 cat << EOF
 Usage: ./coolpbx.sh
 
@@ -13,7 +12,7 @@ Usage: ./coolpbx.sh
 			--superadmin-password=XXXX		The superadmin password, if not specified it will be random.
 			--domain-name=XXXX			Initial domain name.
 			--database-type=mysql|pgsql		The database type it will be used.
-			--database-host=X.X.X.X			The database IP, if not speciied it will be 127.0.0.1.
+			--database-host=X.X.X.X			The database IP, if not speciied it will be localhost.
 			--database-port=9999			The port to connect. If not specified, it will be 3309 for mysql or 5432 for pgsql.
 			--database-username=XXXX		The database use to use. If it doesn't exist, the script will attempt to create it.
 			--database-username-password=XXXX	The database user passwor to connect.
@@ -32,7 +31,6 @@ CoolPBX 1, is a fork that comes from FusionPBX 5. It contains a lot of feautres 
 CoolPBX 2 (in the future), will drop FusionPBX PHP API in favor of Laravel.
 
 EOF
-# EOF is found above and hence cat command stops reading. This is equivalent to echo but much neater when printing out.
 }
 
 
@@ -429,12 +427,12 @@ EOF
 		;;
 esac
 
-sed -i /etc/fusionpbx/config.php -e s:"{database_type}:${database_type}:"
-sed -i /etc/fusionpbx/config.php -e s:"{database_host}:${database_host}:"
-sed -i /etc/fusionpbx/config.php -e s:"{database_port}:${database_port}:"
-sed -i /etc/fusionpbx/config.php -e s:"{database_name}:${database_name}:"
-sed -i /etc/fusionpbx/config.php -e s:"{database_username}:${database_username}:"
-sed -i /etc/fusionpbx/config.php -e s:"{database_password}:${database_username_password}:"
+#sed -i /etc/fusionpbx/config.php -e s:"{database_type}:${database_type}:"
+#sed -i /etc/fusionpbx/config.php -e s:"{database_host}:${database_host}:"
+#sed -i /etc/fusionpbx/config.php -e s:"{database_port}:${database_port}:"
+#sed -i /etc/fusionpbx/config.php -e s:"{database_name}:${database_name}:"
+#sed -i /etc/fusionpbx/config.php -e s:"{database_username}:${database_username}:"
+#sed -i /etc/fusionpbx/config.php -e s:"{database_password}:${database_username_password}:"
 
 sed -i /etc/fusionpbx/config.conf -e s:"{database_type}:${database_type}:"
 sed -i /etc/fusionpbx/config.conf -e s:"{database_host}:${database_host}:"
@@ -635,8 +633,8 @@ xml_cdr_password=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed '
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_http_protocol}:http:"
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{domain_name}:127.0.0.1:"
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_project_path}::"
-sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_user}:$xml_cdr_username:"
-sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_pass}:$xml_cdr_password:"
+sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_user}:${xml_cdr_username}:"
+sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_pass}:${xml_cdr_password}:"
 
 pushd /var/www/CoolPBX
 	php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
