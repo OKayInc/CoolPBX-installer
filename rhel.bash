@@ -332,23 +332,23 @@ chown ${_chopt} freeswitch:daemon /var/run/freeswitch
 /bin/find  /etc/freeswitch -type d -exec chmod 2770 {} \;
 /bin/find  /etc/freeswitch -type f -exec chmod 0664 {} \;
 
-cat <<'EOF' > /etc/fusionpbx/config.php
-<?php
-        //set the database type
-                $db_type = '{database_type}'; //sqlite, mysql, pgsql, others with a manually created PDO connection
+#cat <<'EOF' > /etc/fusionpbx/config.php
+#<?php
+#        //set the database type
+#                $db_type = '{database_type}'; //sqlite, mysql, pgsql, others with a manually created PDO connection
+#
+#                $db_host = '{database_host}';
+#                $db_port = '{database_port}';
+#                $db_name = '{database_name}';
+#                $db_username = '{database_username}';
+#                $db_password = '{database_password}';
 
-                $db_host = '{database_host}';
-                $db_port = '{database_port}';
-                $db_name = '{database_name}';
-                $db_username = '{database_username}';
-                $db_password = '{database_password}';
-
-        //show errors
-                ini_set('display_errors', '1');
-                //error_reporting (E_ALL); // Report everything
-                //error_reporting (E_ALL ^ E_NOTICE); // Report everything
-                error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING ); //hide notices and warnings
-EOF
+#        //show errors
+#                ini_set('display_errors', '1');
+#                //error_reporting (E_ALL); // Report everything
+#                //error_reporting (E_ALL ^ E_NOTICE); // Report everything
+#                error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING ); //hide notices and warnings
+#EOF
 
 
 cat <<'EOF' > /etc/fusionpbx/config.conf
