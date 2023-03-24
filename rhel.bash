@@ -127,7 +127,7 @@ function build_connection_string() {
 
 	case "${database_type}" in
 		mysql|mariadb)
-			_result="mariadb://Server=${database_host}; Port=${database_port}; Database=${database_name}; Uid=${database_username}; Pwd=${database_username_password}"
+			_result="mariadb://Server=${database_host};Port=${database_port};Database=${database_name};Uid=${database_username};Pwd=${database_username_password}"
 			;;
 		pgsql)
 			_result="pgsql://hostaddr=${database_host} port=${database_port} dbname=${database_name} user=${database_username} password=${database_username_password} options=''"
