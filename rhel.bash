@@ -330,6 +330,17 @@ chown ${_chopt} freeswitch:daemon /var/run/freeswitch
 /bin/find  /etc/freeswitch -type d -exec chmod 2770 {} \;
 /bin/find  /etc/freeswitch -type f -exec chmod 0664 {} \;
 
+_dsn=$(build_freeswitch_connection_string)
+sed -i /etc/freeswitch/vars.xml -e s"|{dsn}|${_dsn}|"
+case "${database_type}" in
+	mysql|mariadb)
+		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|freeswitch:${database_username}:${database_username_password}|"
+		;;
+	pgsql)
+		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|${_dsn}|"
+		;;
+esac
+
 #cat <<'EOF' > /etc/fusionpbx/config.php
 #<?php
 #        //set the database type
@@ -618,16 +629,6 @@ case "${database_type}" in
 		;;
 esac
 
-_dsn=$(build_freeswitch_connection_string)
-sed -i /etc/freeswitch/vars.xml -e s"|{dsn}|${_dsn}|"
-case "${database_type}" in
-	mysql|mariadb)
-		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|freeswitch:${database_username}:${database_username_password}|"
-		;;
-	pgsql)
-		sed -i /etc/freeswitch/vars.xml -e s"|{odbc-dsn}|${_dsn}|"
-		;;
-esac
 xml_cdr_username=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
 xml_cdr_password=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_http_protocol}:http:"
