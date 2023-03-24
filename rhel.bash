@@ -490,6 +490,13 @@ case "${database_type}" in
 		done
 		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
 		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+
 		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="FLUSH PRIVILEGES"
 		;;
 	pgsql)
