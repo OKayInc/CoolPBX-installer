@@ -307,7 +307,7 @@ if [ ! -f "/etc/freeswitch.tar.gz" ]; then
 fi
 
 rm -rf /etc/freeswitch
-mkdir -p /etc/freeswitch
+mkdir -p /etc/freeswitch/tls
 
 echo "Configuring CoolPBX..."
 mkdir -p /etc/fusionpbx
