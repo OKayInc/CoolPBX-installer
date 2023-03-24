@@ -4,29 +4,29 @@ function showHelp() {
 cat << EOF
 Usage: ./coolpbx.sh
 
--h,	-help,		--help                  	Display help
--v,	-verbose,	--verbose				Run script in verbose mode. Will print out each step of execution.
--d,	-debug,		--debug					Display debug information.
+-h,     -help,          --help                          Display help
+-v,     -verbose,       --verbose                               Run script in verbose mode. Will print out each step of execution.
+-d,     -debug,         --debug                                 Display debug information.
 
-			--superadmin=XXXX			The initial superadmin, by default is superadmin.
-			--superadmin-password=XXXX		The superadmin password, if not specified it will be random.
-			--domain-name=XXXX			Initial domain name.
-			--database-type=mysql|pgsql		The database type it will be used.
-			--database-host=X.X.X.X			The database IP, if not speciied it will be localhost.
-			--database-port=9999			The port to connect. If not specified, it will be 3309 for mysql or 5432 for pgsql.
-			--database-username=XXXX		The database use to use. If it doesn't exist, the script will attempt to create it.
-			--database-username-password=XXXX	The database user passwor to connect.
-			--database-admin-username=XXXX		The admin database username to use to configure. If not specified it will be root for mysql and postgres for pgsql.
-			--database-admin-username-password=XXXX	The admin database username password to use. If not specified, the datbase-username-password value will be used.
+                        --superadmin=XXXX                       The initial superadmin, by default is superadmin.
+                        --superadmin-password=XXXX              The superadmin password, if not specified it will be random.
+                        --domain-name=XXXX                      Initial domain name.
+                        --database-type=mysql|pgsql             The database type it will be used.
+                        --database-host=X.X.X.X                 The database IP, if not speciied it will be localhost.
+                        --database-port=9999                    The port to connect. If not specified, it will be 3309 for mysql or 5432 for pgsql.
+                        --database-username=XXXX                The database use to use. If it doesn't exist, the script will attempt to create it.
+                        --database-username-password=XXXX       The database user passwor to connect.
+                        --database-admin-username=XXXX          The admin database username to use to configure. If not specified it will be root for mysql and postgres for pgsql.
+                        --database-admin-username-password=XXXX The admin database username password to use. If not specified, the datbase-username-password value will be used.
 
-			--slave					Just add a slave node. Database must be external.
+                        --slave                                 Just add a slave node. Database must be external.
 
 About:
 CoolPBX 1, is a fork that comes from FusionPBX 5. It contains a lot of feautres that have been rejected or removed from the original project. Some of them:
-	- MySQL/MariaDB support, FusionPBX 5 has removed it, but since FreeSWITCH 1.10 has now mod_mariadb, it doesn't make sense not having it.
-	- Parent-Child domain support, FusionPBX 4.4 rejected a patch that will help business to have a reseller scheme.
-	- Billing/LCR ready (comming soon).
-	- and more.
+        - MySQL/MariaDB support, FusionPBX 5 has removed it, but since FreeSWITCH 1.10 has now mod_mariadb, it doesn't make sense not having it.
+        - Parent-Child domain support, FusionPBX 4.4 rejected a patch that will help business to have a reseller scheme.
+        - Billing/LCR ready (comming soon).
+        - and more.
 
 CoolPBX 2 (in the future), will drop FusionPBX PHP API in favor of Laravel.
 
@@ -35,117 +35,117 @@ EOF
 
 
 function setDefaults() {
-	if [ .$superadmin = .'' ]; then
-		export superadmin=superadmin
-	fi
+        if [ .$superadmin = .'' ]; then
+                export superadmin=superadmin
+        fi
 
-	if [ .$superadmin_password = .'' ]; then
-		export superadmin_password=$(dd if=/dev/urandom bs=1 count=20 2>/dev/null | base64 | sed 's/[=\+//]//g')
-	fi
+        if [ .$superadmin_password = .'' ]; then
+                export superadmin_password=$(dd if=/dev/urandom bs=1 count=20 2>/dev/null | base64 | sed 's/[=\+//]//g')
+        fi
 
-	if [ .$domain_name = .'' ]; then
-		export domain_name=$(hostname -I | cut -d ' ' -f1)
-	fi
+        if [ .$domain_name = .'' ]; then
+                export domain_name=$(hostname -I | cut -d ' ' -f1)
+        fi
 
-	if [ .$database_type = .'' ]; then
-		export database_type=mysql
-	else
-		case "${database_type}" in
-			mariadb|mysql)
-				_type=mysql
-				;;
-			postgresql|postgres)
-				_type=pgsql
-				;;
-		esac
+        if [ .$database_type = .'' ]; then
+                export database_type=mysql
+        else
+                case "${database_type}" in
+                        mariadb|mysql)
+                                _type=mysql
+                                ;;
+                        postgresql|postgres)
+                                _type=pgsql
+                                ;;
+                esac
 
-		export database_type=${_type}
-	fi
+                export database_type=${_type}
+        fi
 
-	if [ .$database_host = .'' ]; then
-		export database_host=localhost
-	fi
+        if [ .$database_host = .'' ]; then
+                export database_host=localhost
+        fi
 
-	if [ .$database_port = .'' ]; then
-		case "${database_type}" in
-			mysql)
-				_port=3306
-				;;
-			pgsql)
-				_port=5432
-				;;
-		esac
+        if [ .$database_port = .'' ]; then
+                case "${database_type}" in
+                        mysql)
+                                _port=3306
+                                ;;
+                        pgsql)
+                                _port=5432
+                                ;;
+                esac
 
-		export database_port=${_port}
-	fi
+                export database_port=${_port}
+        fi
 
-	if [ .$database_name = .'' ]; then
-		export database_name=coolpbx
-	fi
+        if [ .$database_name = .'' ]; then
+                export database_name=coolpbx
+        fi
 
-	if [ .$database_username = .'' ]; then
-		export database_username=coolpbx
-	fi
+        if [ .$database_username = .'' ]; then
+                export database_username=coolpbx
+        fi
 
-	if [ .$database_username_password = .'' ]; then
-		export database_username_password=$(dd if=/dev/urandom bs=1 count=20 2>/dev/null | base64 | sed 's/[=\+//]//g')
-	fi
+        if [ .$database_username_password = .'' ]; then
+                export database_username_password=$(dd if=/dev/urandom bs=1 count=20 2>/dev/null | base64 | sed 's/[=\+//]//g')
+        fi
 
-	if [ .$database_admin_username = .'' ]; then
-		case "${database_type}" in
-			mysql)
-				_admin=root
-				;;
-			pgsql)
-				_admin=postgres
-				;;
-		esac
-		export database_admin_username=${_admin}
-	fi
+        if [ .$database_admin_username = .'' ]; then
+                case "${database_type}" in
+                        mysql)
+                                _admin=root
+                                ;;
+                        pgsql)
+                                _admin=postgres
+                                ;;
+                esac
+                export database_admin_username=${_admin}
+        fi
 
-	if [ .$slave = .'' ]; then
-		export slave=0
-	fi
+        if [ .$slave = .'' ]; then
+                export slave=0
+        fi
 }
 
 function is_localhost() {
-	_ip=$1
-	_result=0
+        _ip=$1
+        _result=0
 
-	case "${_ip}" in
-		localhost|127.0.0.1|::1|0:0:0:0:0:0:0:1)
-			_result=1
-			;;
-	esac
-	echo ${_result}
+        case "${_ip}" in
+                localhost|127.0.0.1|::1|0:0:0:0:0:0:0:1)
+                        _result=1
+                        ;;
+        esac
+        echo ${_result}
 }
 
 function build_connection_string() {
-	_result='';
+        _result='';
 
-	case "${database_type}" in
-		mysql|mariadb)
-			_result="mariadb://Server=${database_host};Port=${database_port};Database=${database_name};Uid=${database_username};Pwd=${database_username_password}"
-			;;
-		pgsql)
-			_result="pgsql://hostaddr=${database_host} port=${database_port} dbname=${database_name} user=${database_username} password=${database_username_password} options=''"
-			;;
-	esac
-	echo ${_result}
+        case "${database_type}" in
+                mysql|mariadb)
+                        _result="mariadb://Server=${database_host};Port=${database_port};Database=${database_name};Uid=${database_username};Pwd=${database_username_password}"
+                        ;;
+                pgsql)
+                        _result="pgsql://hostaddr=${database_host} port=${database_port} dbname=${database_name} user=${database_username} password=${database_username_password} options=''"
+                        ;;
+        esac
+        echo ${_result}
 }
 
 function build_freeswitch_connection_string() {
-	_result='';
+        _result='';
 
-	case "${database_type}" in
-		mysql|mariadb)
-			_result="mariadb://Server=${database_host};Port=${database_port};Database=freeswitch;Uid=${database_username};Pwd=${database_username_password}"
-			;;
-		pgsql)
-			_result="pgsql://hostaddr=${database_host} port=${database_port} dbname=freeswitch user=${database_username} password=${database_username_password} options=''"
-			;;
-	esac
-	echo ${_result}
+        case "${database_type}" in
+                mysql|mariadb)
+                        _result="mariadb://Server=${database_host};Port=${database_port};Database=freeswitch;Uid=${database_username};Pwd=${database_username_password}"
+                        ;;
+                pgsql)
+                        _result="pgsql://hostaddr=${database_host} port=${database_port} dbname=freeswitch user=${database_username} password=${database_username_password} options=''"
+                        ;;
+        esac
+        echo ${_result}
 }
 
 echo -e "CoolPBX installer (a FusionPBX fork)\n"
@@ -164,77 +164,77 @@ eval set -- "$options"
 
 while true
 do
-	case "$1" in
-		-d|--debug)
-			set -xv  # Set xtrace and verbose mode.
-			;;
-		-h|--help)
-			showHelp
-			exit 0
-			;;
-		-v|--verbose)
-			export verbose=1
-			;;
-		--superadmin)
-			export superadmin=$2
-			;;
-		--superadmin-password)
-			export superadmin_password=$2
-			;;
-		--domain-name)
-			export domain_name=$2
-			;;
-		--database-type)
-			export database_type=$2
-			;;
-		--database-host)
-			export database_host=$2
-			;;
-		--database-port)
-			export database_port=$2
-			;;
-		--database-name)
-			export database_name=$2
-			;;
-		--database-username)
-			export database_username=$2
-			;;
-		--database-username-password)
-			export database_username_password=$2
-			;;
-		--database-admin-username)
-			export database_admin_username=$2
-			;;
-		--database-admin-username-password)
-			export database_admin_username_password=$2
-			;;
-		--slave)
-			export slave=1
-			;;
-		--)
-			shift
-			break
-			;;
-	esac
-	shift
+        case "$1" in
+                -d|--debug)
+                        set -xv  # Set xtrace and verbose mode.
+                        ;;
+                -h|--help)
+                        showHelp
+                        exit 0
+                        ;;
+                -v|--verbose)
+                        export verbose=1
+                        ;;
+                --superadmin)
+                        export superadmin=$2
+                        ;;
+                --superadmin-password)
+                        export superadmin_password=$2
+                        ;;
+                --domain-name)
+                        export domain_name=$2
+                        ;;
+                --database-type)
+                        export database_type=$2
+                        ;;
+                --database-host)
+                        export database_host=$2
+                        ;;
+                --database-port)
+                        export database_port=$2
+                        ;;
+                --database-name)
+                        export database_name=$2
+                        ;;
+                --database-username)
+                        export database_username=$2
+                        ;;
+                --database-username-password)
+                        export database_username_password=$2
+                        ;;
+                --database-admin-username)
+                        export database_admin_username=$2
+                        ;;
+                --database-admin-username-password)
+                        export database_admin_username_password=$2
+                        ;;
+                --slave)
+                        export slave=1
+                        ;;
+                --)
+                        shift
+                        break
+                        ;;
+        esac
+        shift
 done
 
 export original_database_type=${database_type}
 
 if [ .$verbose = .'1' ]; then
-	echo 'Prameters received:'
-	echo "Super Admin username: ${superadmin}"
-	echo "Super Admin password: ${superadmin_password}"
-	echo "Default domain: ${domain_name}"
-	echo "Database type: ${database_type}"
-	echo "Database host: ${database_host}"
-	echo "Database port: ${database_port}"
-	echo "Database name: ${database_name}"
-	echo "Database username: ${database_username}"
-	echo "Database username password: ${database_username_password}"
-	echo "Database admin username: ${database_admin_username}"
-	echo "Database admin username password: ${database_admin_username_password}"
-	echo "Slave: ${slave}"
+        echo 'Prameters received:'
+        echo "Super Admin username: ${superadmin}"
+        echo "Super Admin password: ${superadmin_password}"
+        echo "Default domain: ${domain_name}"
+        echo "Database type: ${database_type}"
+        echo "Database host: ${database_host}"
+        echo "Database port: ${database_port}"
+        echo "Database name: ${database_name}"
+        echo "Database username: ${database_username}"
+        echo "Database username password: ${database_username_password}"
+        echo "Database admin username: ${database_admin_username}"
+        echo "Database admin username password: ${database_admin_username_password}"
+        echo "Slave: ${slave}"
 fi
 
 setDefaults
@@ -286,24 +286,24 @@ mkdir -p /var/cache/fusionpbx
 chown -R freeswitch:daemon /var/cache/fusionpbx
 
 if [ ! -d "/var/www/CoolPBX" ]; then
-	echo "Downloading CoolPBX..."
-	git clone https://github.com/OKayInc/CoolPBX.git /var/www/CoolPBX
+        echo "Downloading CoolPBX..."
+        git clone https://github.com/OKayInc/CoolPBX.git /var/www/CoolPBX
 else
-	echo "Looks like CoolPBX was already installing, updating"
-	pushd /var/www/CoolPBX
-	git pull
-	popd
+        echo "Looks like CoolPBX was already installing, updating"
+        pushd /var/www/CoolPBX
+        git pull
+        popd
 fi
 
 echo "Copying configuration into FreeSWITCH..."
 if [ ! -f "/etc/freeswitch.tar.gz" ]; then
-	echo "Backing up your configuration"
-	if [ .$verbose = .'1' ]; then
-		_taropt='-czvf'
-	else
-		_taropt='-czf'
-	fi
-	tar ${_taropt} /etc/freeswitch.tar.gz /etc/freeswitch
+        echo "Backing up your configuration"
+        if [ .$verbose = .'1' ]; then
+                _taropt='-czvf'
+        else
+                _taropt='-czf'
+        fi
+        tar ${_taropt} /etc/freeswitch.tar.gz /etc/freeswitch
 fi
 
 rm -rf /etc/freeswitch
@@ -313,24 +313,26 @@ echo "Configuring CoolPBX..."
 mkdir -p /etc/fusionpbx
 
 if [ .$verbose = .'1' ]; then
-	_cpopt='-Rvf'
-	_chopt='-Rvf'
+        _cpopt='-Rvf'
+        _chopt='-Rvf'
 else
-	_cpopt='-Rf'
-	_chopt='-Rf'
+        _cpopt='-Rf'
+        _chopt='-Rf'
 fi
 
 _dsn=$(build_freeswitch_connection_string)
 case "${database_type}" in
-	mysql|mariadb)
-		_odbc_dsn="freeswitch:${database_username}:${database_username_password}"
-		;;
-	pgsql)
-		_odbc_dsn="${_dsn}"
-		;;
+        mysql|mariadb)
+                _odbc_dsn="freeswitch:${database_username}:${database_username_password}"
+                ;;
+        pgsql)
+                _odbc_dsn="${_dsn}"
+                ;;
 esac
+cp /var/www/CoolPBX/resources/templates/conf/vars.xml /var/www/CoolPBX/resources/templates/conf/vars.xml.original
 sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{dsn}|${_dsn}|"
 sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{odbc-dsn}|${_odbc_dsn}|"
+mv /var/www/CoolPBX/resources/templates/conf/vars.xml.original /var/www/CoolPBX/resources/templates/conf/vars.xml
 
 cp ${_cpopt} /var/www/CoolPBX/resources/templates/conf/* /etc/freeswitch
 
@@ -413,8 +415,8 @@ error.reporting = 'E_ALL ^ E_NOTICE ^ E_WARNING'
 EOF
 
 case "${database_type}" in
-	mysql|mariadb)
-		cat <<'EOF' > /etc/odbc.ini
+        mysql|mariadb)
+                cat <<'EOF' > /etc/odbc.ini
 [freeswitch]
 Driver   = MariaDB
 SERVER   = {database_host}
@@ -434,11 +436,11 @@ OPTION  = 67108864
 Socket   = /var/lib/mysql/mysql.sock
 threading=0
 EOF
-		;;
-	pgsql)
-		cat <<'EOF' > /etc/odbc.ini
+                ;;
+        pgsql)
+                cat <<'EOF' > /etc/odbc.ini
 EOF
-		;;
+                ;;
 esac
 
 #sed -i /etc/fusionpbx/config.php -e s:"{database_type}:${database_type}:"
@@ -462,136 +464,182 @@ sed -i /etc/odbc.ini -e s:"{database_name}:${database_name}:"
 _is_local_db=$(is_localhost ${database_host})
 
 case "${database_type}" in
-	mysql|mariadb)
-		if [ .$_is_local_db = '.1' ]; then
-			if [ .$slave = .'1' ]; then
-				echo '--slave flag can not be used if you are using a local database'
-				exit 1
-			else
-				if [ .$verbose = .'1' ]; then
-					echo 'Restarting local database daemon'
-				fi
+        mysql|mariadb)
+                if [ .$_is_local_db = '.1' ]; then
+                        if [ .$slave = .'1' ]; then
+                                echo '--slave flag can not be used if you are using a local database'
+                                exit 1
+                        else
+                                if [ .$verbose = .'1' ]; then
+                                        echo 'Restarting local database daemon'
+                                fi
 
-				case "${MAJOR_VERSION}" in
-					7)
-						db_service=mysql
-						;;
-					8|9)
-						db_service=mariadb
-						;;
-				esac
+                                case "${MAJOR_VERSION}" in
+                                        7)
+                                                db_service=mysql
+                                                ;;
+                                        8|9)
+                                                db_service=mariadb
+                                                ;;
+                                esac
 
-				systemctl enable ${db_service}
-				systemctl start ${db_service}
-			fi
-		fi
+                                systemctl enable ${db_service}
+                                systemctl start ${db_service}
+                        fi
+                fi
 
-		if [ .$slave = .'1' ]; then
-			echo "Let's not destroy the database"
-		else
-			echo "Creating MariaDB/MySQL database if it doesn't exist..."
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS ${database_name}"
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS freeswitch"
-		fi
+                if [ .$slave = .'1' ]; then
+                        echo "Let's not destroy the database"
+                else
+                        echo "Creating MariaDB/MySQL database if it doesn't exist..."
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS ${database_name}"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS freeswitch"
+                fi
 
-		echo "Adding MariaDB/MySQL user permissions..."
-		for ip in $(hostname -I)
-		do
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
-		done
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+                echo "Adding MariaDB/MySQL user permissions..."
+                for ip in $(hostname -I)
+                do
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                done
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
 
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="FLUSH PRIVILEGES"
-		;;
-	pgsql)
-		if [ .$_is_local_db = '.1' ]; then
-			if [ .$slave = .'1' ]; then
-				echo '--slave flag can not be used if you are using a local database'
-				exit 1
-			else
-				if [ .$verbose = .'1' ]; then
-					echo 'Restarting local database daemon'
-				fi
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="FLUSH PRIVILEGES"
+                ;;
+        pgsql)
+                if [ .$_is_local_db = '.1' ]; then
+                        if [ .$slave = .'1' ]; then
+                                echo '--slave flag can not be used if you are using a local database'
+                                exit 1
+                        else
+                                if [ .$verbose = .'1' ]; then
+                                        echo 'Restarting local database daemon'
+                                fi
 
-				systemctl enable postgresql
-				systemctl start postgresql
-			fi
-		fi
+                                systemctl enable postgresql
+                                systemctl start postgresql
+                        fi
+                fi
 
-		if [ .$slave = .'1' ]; then
-			echo "Let's not destroy the database"
-		else
-			echo "Droppig PostgreSQL database..."
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c 'DROP SCHEMA public cascade;'
-			echo "Creating PostgreSQL database..."
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c 'CREATE SCHEMA public;'
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE DATABASE ${database_name};"
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE DATABASE freeswitch;"
-			echo "Adding PostgreSQL roles..."
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE ROLE ${database_username} WITH SUPERUSER LOGIN PASSWORD '${database_username_password}';"
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE ROLE freeswitch WITH SUPERUSER LOGIN PASSWORD '${database_username_password}';"
-			echo "Adding PostgreSQL user permissions..."
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "GRANT ALL PRIVILEGES ON DATABASE ${database_name} to ${database_username};"
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "GRANT ALL PRIVILEGES ON DATABASE freeswitch to ${database_username};"
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "GRANT ALL PRIVILEGES ON DATABASE freeswitch to freeswitch;"
-		fi
-		;;
+                if [ .$slave = .'1' ]; then
+                        echo "Let's not destroy the database"
+                else
+                        echo "Droppig PostgreSQL database..."
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c 'DROP SCHEMA public cascade;'
+                        echo "Creating PostgreSQL database..."
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c 'CREATE SCHEMA public;'
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE DATABASE ${database_name};"
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE DATABASE freeswitch;"
+                        echo "Adding PostgreSQL roles..."
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE ROLE ${database_username} WITH SUPERUSER LOGIN PASSWORD '${database_username_password}';"
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "CREATE ROLE freeswitch WITH SUPERUSER LOGIN PASSWORD '${database_username_password}';"
+                        echo "Adding PostgreSQL user permissions..."
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "GRANT ALL PRIVILEGES ON DATABASE ${database_name} to ${database_username};"
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "GRANT ALL PRIVILEGES ON DATABASE freeswitch to ${database_username};"
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "GRANT ALL PRIVILEGES ON DATABASE freeswitch to freeswitch;"
+                fi
+                ;;
 esac
 
 if [ .$verbose = .'1' ]; then
-	shopt='> /dev/null 2>&1'
+        shopt='> /dev/null 2>&1'
 else
-	shopt=''
+        shopt=''
 fi
 
 echo "Setting up CoolPBX..."
 pushd /var/www/CoolPBX
-	php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
-	domain_uuid=$(uuidgen)
-	sql_domain="INSERT INTO v_domains (domain_uuid, domain_name, domain_enabled) values('${domain_uuid}', '${domain_name}', 'true');"
+        php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
+        domain_uuid=$(uuidgen)
+        sql_domain="INSERT INTO v_domains (domain_uuid, domain_name, domain_enabled) values('${domain_uuid}', '${domain_name}', 'true');"
 
-	case "${database_type}" in
-		mysql|mariadb)
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_domain}" ${database_name}
-			;;
-		pgsql)
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_domain}"
-			;;
-	esac
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_domain}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_domain}"
+                        ;;
+        esac
 
-	default_setting_uuid=$(uuidgen)
-	sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'conf', 'dir', '/etc/freeswitch', NULL, 'true', NULL);"
-	case "${database_type}" in
-		mysql|mariadb)
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-			;;
-		pgsql)
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-			;;
-	esac
+        default_setting_uuid=$(uuidgen)
+        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'conf', 'dir', '/etc/freeswitch', NULL, 'true', NULL);"
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                        ;;
+        esac
 
-	default_setting_uuid=$(uuidgen)
-	sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'languages', 'dir', '/etc/freeswitch/languages', NULL, 'true', NULL);"
-	case "${database_type}" in
-		mysql|mariadb)
-			mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-			;;
-		pgsql)
-			PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-			;;
-	esac
+        default_setting_uuid=$(uuidgen)
+        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'languages', 'dir', '/etc/freeswitch/languages', NULL, 'true', NULL);"
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                        ;;
+        esac
 
-	echo 'Upgrading domains...'
-	php /var/www/CoolPBX/core/upgrade/upgrade_domains.php
+        default_setting_uuid=$(uuidgen)
+        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'scripts', 'dir', '/usr/share/freeswitch/scripts', NULL, 'true', NULL);"
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                        ;;
+        esac
+
+        default_setting_uuid=$(uuidgen)
+        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'recordings', 'dir', '/var/lib/freeswitch/recordings', NULL, 'true', NULL);"
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                        ;;
+        esac
+
+        default_setting_uuid=$(uuidgen)
+        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'storage', 'dir', '/var/lib/freeswitch/storage', NULL, 'true', NULL);"
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                        ;;
+        esac
+
+        default_setting_uuid=$(uuidgen)
+        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'voicemail', 'dir', '/var/lib/freeswitch/storage/voicemail', NULL, 'true', NULL);"
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                        ;;
+        esac
+
+        echo 'Upgrading domains...'
+        php /var/www/CoolPBX/core/upgrade/upgrade_domains.php ${shopt}
 popd
+
+
 
 user_uuid=$(uuidgen)
 user_salt=$(uuidgen)
@@ -600,22 +648,22 @@ password_hash=$(echo -n ${user_salt}${superadmin_password}|md5sum -t | cut -d' '
 sql_useradmin="INSERT INTO v_users (user_uuid, domain_uuid, username, password, salt, user_enabled) values('${user_uuid}', '${domain_uuid}', '${superadmin}', '${password_hash}', '${user_salt}', 'true');"
 
 case "${database_type}" in
-	mysql|mariadb)
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_useradmin}" ${database_name}
-		;;
-	pgsql)
-		PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_useradmin}"
-		;;
+        mysql|mariadb)
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_useradmin}" ${database_name}
+                ;;
+        pgsql)
+                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_useradmin}"
+                ;;
 esac
 
 sql_superadmin_group="SELECT group_uuid FROM v_groups WHERE group_name = 'superadmin';"
 case "${database_type}" in
-	mysql|mariadb)
-		group_uuid=$(mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} -s -N --execute="${sql_superadmin_group}" ${database_name})
-		;;
-	pgsql)
-		group_uuid=$(PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -t -c "${sql_superadmin_group}")
-		;;
+        mysql|mariadb)
+                group_uuid=$(mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} -s -N --execute="${sql_superadmin_group}" ${database_name})
+                ;;
+        pgsql)
+                group_uuid=$(PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -t -c "${sql_superadmin_group}")
+                ;;
 esac
 
 group_uuid=$(echo $group_uuid | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
@@ -624,12 +672,12 @@ group_name=superadmin
 sql_user_groups="INSERT INTO v_user_groups (user_group_uuid, domain_uuid, group_name, group_uuid, user_uuid) VALUES('${user_group_uuid}', '${domain_uuid}', '${group_name}', '${group_uuid}', '${user_uuid}');"
 
 case "${database_type}" in
-	mysql|mariadb)
-		mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_user_groups}" ${database_name}
-		;;
-	pgsql)
-		PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_user_groups}"
-		;;
+        mysql|mariadb)
+                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_user_groups}" ${database_name}
+                ;;
+        pgsql)
+                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_user_groups}"
+                ;;
 esac
 
 xml_cdr_username=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
@@ -641,7 +689,7 @@ sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_user}:${xml_cd
 sed -i /etc/freeswitch/autoload_configs/xml_cdr.conf.xml -e s:"{v_pass}:${xml_cdr_password}:"
 
 pushd /var/www/CoolPBX
-	php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
+        php /var/www/CoolPBX/core/upgrade/upgrade.php ${shopt}
 popd
 
 rm -f /var/lib/php/session/*
@@ -682,11 +730,11 @@ Your CoolPBX is installed, please take note of the following:
 EOF
 for ip in $(hostname -I)
 do
-	echo "	http://${ip}"
+        echo "  http://${ip}"
 done
 cat << EOF
 - to configure HTTPS, type
-	edit /etc/httpd/conf.d/ssl.conf to fit your needs (for example, configure a custom certificate), by default, you will have a self-signed certificate.
+        edit /etc/httpd/conf.d/ssl.conf to fit your needs (for example, configure a custom certificate), by default, you will have a self-signed certificate.
 
 Need private commercial support? Book it! https://okay.appointlet.com/
 Free, public support in the Telegram group at https://t.me/fpbxsupport
