@@ -271,6 +271,8 @@ setenforce 0
 sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/selinux/config
 
 echo "Installing the repositories and base packages..."
+yum -y module reset php
+yum -y module install php:remi-8.2
 yum -y update --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
 yum -y install epel-release  --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
 yum -y install https://rpms.remirepo.net/enterprise/remi-release-${MAJOR_VERSION}.rpm  --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
