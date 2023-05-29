@@ -271,13 +271,13 @@ setenforce 0
 sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/selinux/config
 
 echo "Installing the repositories and base packages..."
-yum -y module reset php
-yum -y module install php:remi-8.2
 yum -y update --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
 yum -y install epel-release  --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
 yum -y install https://rpms.remirepo.net/enterprise/remi-release-${MAJOR_VERSION}.rpm  --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
 yum -y install http://repo.okay.com.mx/centos/${MAJOR_VERSION}/x86_64/release/okay-release-1-6.el${MAJOR_VERSION}.noarch.rpm  --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
 yum -y install git task-fusionpbx task-fusionpbx-${database_type}  mod_ssl fail2ban-systemd freeswitch-fail2ban-rules fusionpbx-fail2ban-rules --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
+yum -y module reset php
+yum -y module install php:remi-8.2
 
 echo "Configuring Apache directory..."
 sed -i 's/\/var\/www\/html/\/var\/www\/CoolPBX/' /etc/httpd/conf/httpd.conf
