@@ -12,20 +12,21 @@ Usage: ./coolpbx.sh
                         --superadmin-password=XXXX              The superadmin password, if not specified it will be random.
                         --domain-name=XXXX                      Initial domain name.
                         --database-type=mysql|pgsql             The database type it will be used.
-                        --database-host=X.X.X.X                 The database IP, if not speciied it will be localhost.
+                        --database-host=X.X.X.X                 The database IP, if not specified will be localhost.
+                        --database-name=XXXXX                   The database name, if not specified will be coolpbx.
                         --database-port=9999                    The port to connect. If not specified, it will be 3309 for mysql or 5432 for pgsql.
-                        --database-username=XXXX                The database use to use. If it doesn't exist, the script will attempt to create it.
-                        --database-username-password=XXXX       The database user passwor to connect.
+                        --database-username=XXXX                The database user to use. If it doesn't exist, the script will attempt to create it.
+                        --database-username-password=XXXX       The database user password to connect.
                         --database-admin-username=XXXX          The admin database username to use to configure. If not specified it will be root for mysql and postgres for pgsql.
                         --database-admin-username-password=XXXX The admin database username password to use. If not specified, the datbase-username-password value will be used.
 
-                        --slave                                 Just add a slave node. Database must be external.
+                        --slave                                 Just add a slave node. The database must be external.
 
 About:
-CoolPBX 1, is a fork that comes from FusionPBX 5. It contains a lot of feautres that have been rejected or removed from the original project. Some of them:
-        - MySQL/MariaDB support, FusionPBX 5 has removed it, but since FreeSWITCH 1.10 has now mod_mariadb, it doesn't make sense not having it.
-        - Parent-Child domain support, FusionPBX 4.4 rejected a patch that will help business to have a reseller scheme.
-        - Billing/LCR ready (comming soon).
+CoolPBX 1, is a fork that comes from FusionPBX 5. It contains a lot of features that have been rejected or removed from the original project. Some of them:
+        - MySQL/MariaDB support, FusionPBX 5 has removed it, but since FreeSWITCH 1.10 has now mod_mariadb, it doesn't make sense not to have it.
+        - Parent-Child domain support, FusionPBX 4.4 rejected a patch that will help businesses to have a reseller scheme.
+        - Billing/LCR ready (coming soon).
         - and more.
 
 CoolPBX 2 (in the future), will drop FusionPBX PHP API in favor of Laravel.
