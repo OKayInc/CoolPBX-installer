@@ -347,7 +347,7 @@ esac
 
 /bin/find  /etc/freeswitch -type d -exec chmod 2770 {} \;
 /bin/find  /etc/freeswitch -type f -exec chmod 0664 {} \;
-
+/usr/sbin/usermod -a -G daemon apache
 
 #cat <<'EOF' > /etc/fusionpbx/config.php
 #<?php
