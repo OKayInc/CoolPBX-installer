@@ -223,7 +223,7 @@ done
 export original_database_type=${database_type}
 
 if [ .$verbose = .'1' ]; then
-        echo 'Prameters received:'
+        echo 'Parameters received:'
         echo "Super Admin username: ${superadmin}"
         echo "Super Admin password: ${superadmin_password}"
         echo "Default domain: ${domain_name}"
@@ -269,7 +269,7 @@ MAJOR_VERSION=$(echo ${VERSION}|cut -d '.' -f 1)
 
 echo "Disabling SELinux, you may need to reboot after the installation is done."
 setenforce 0
-sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/selinux/config
+/usr/bin/sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/selinux/config
 
 echo "Installing the repositories and base packages..."
 yum -y update --enablerepo=* --disablerepo=okay-debuginfo,media-* --nogpg
@@ -281,12 +281,12 @@ yum -y module reset php
 yum -y module install php:remi-8.2
 
 echo "Configuring Apache directory..."
-sed -i 's/\/var\/www\/html/\/var\/www\/CoolPBX/' /etc/httpd/conf/httpd.conf
-sed -i '0,/AllowOverride None/{s/AllowOverride None/AllowOverride All/}' /etc/httpd/conf/httpd.conf
+/usr/bin/sed -i 's/\/var\/www\/html/\/var\/www\/CoolPBX/' /etc/httpd/conf/httpd.conf
+/usr/bin/sed -i '0,/AllowOverride None/{s/AllowOverride None/AllowOverride All/}' /etc/httpd/conf/httpd.conf
 
 echo "Creating Cache directory..."
-mkdir -p /var/cache/fusionpbx
-chown -R freeswitch:daemon /var/cache/fusionpbx
+/usr/bin/mkdir -p /var/cache/fusionpbx
+/usr/bin/chown -R freeswitch:daemon /var/cache/fusionpbx
 
 if [ ! -d "/var/www/CoolPBX" ]; then
         echo "Downloading CoolPBX..."
@@ -309,11 +309,11 @@ if [ ! -f "/etc/freeswitch.tar.gz" ]; then
         tar ${_taropt} /etc/freeswitch.tar.gz /etc/freeswitch
 fi
 
-rm -rf /etc/freeswitch
-mkdir -p /etc/freeswitch/tls
+/usr/bin/rm -rf /etc/freeswitch
+/usr/bin/mkdir -p /etc/freeswitch/tls
 
 echo "Configuring CoolPBX..."
-mkdir -p /etc/fusionpbx
+/usr/bin/mkdir -p /etc/fusionpbx
 
 if [ .$verbose = .'1' ]; then
         _cpopt='-Rvf'
@@ -332,18 +332,18 @@ case "${database_type}" in
                 _odbc_dsn="${_dsn}"
                 ;;
 esac
-cp /var/www/CoolPBX/resources/templates/conf/vars.xml /var/www/CoolPBX/resources/templates/conf/vars.xml.original
-sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{dsn}|${_dsn}|"
-sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{odbc-dsn}|${_odbc_dsn}|"
-mv /var/www/CoolPBX/resources/templates/conf/vars.xml.original /var/www/CoolPBX/resources/templates/conf/vars.xml
+/usr/bin/cp /var/www/CoolPBX/resources/templates/conf/vars.xml /var/www/CoolPBX/resources/templates/conf/vars.xml.original
+/usr/bin/sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{dsn}|${_dsn}|"
+/usr/bin/sed -i /var/www/CoolPBX/resources/templates/conf/vars.xml -e s"|{odbc-dsn}|${_odbc_dsn}|"
+#mv /var/www/CoolPBX/resources/templates/conf/vars.xml.original /var/www/CoolPBX/resources/templates/conf/vars.xml
 
-cp ${_cpopt} /var/www/CoolPBX/resources/templates/conf/* /etc/freeswitch
+/usr/bin/cp ${_cpopt} /var/www/CoolPBX/resources/templates/conf/* /etc/freeswitch
 
-chown ${_chopt} freeswitch:daemon /etc/freeswitch
-chown ${_chopt} freeswitch:daemon /var/lib/freeswitch
-chown ${_chopt} freeswitch:daemon /usr/share/freeswitch
-chown ${_chopt} freeswitch:daemon /var/log/freeswitch
-chown ${_chopt} freeswitch:daemon /var/run/freeswitch
+/usr/bin/chown ${_chopt} freeswitch:daemon /etc/freeswitch
+/usr/bin/chown ${_chopt} freeswitch:daemon /var/lib/freeswitch
+/usr/bin/chown ${_chopt} freeswitch:daemon /usr/share/freeswitch
+/usr/bin/chown ${_chopt} freeswitch:daemon /var/log/freeswitch
+/usr/bin/chown ${_chopt} freeswitch:daemon /var/run/freeswitch
 
 /bin/find  /etc/freeswitch -type d -exec chmod 2770 {} \;
 /bin/find  /etc/freeswitch -type f -exec chmod 0664 {} \;
