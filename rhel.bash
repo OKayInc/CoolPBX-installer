@@ -561,128 +561,134 @@ echo "Setting up CoolPBX..."
 pushd /var/www/CoolPBX
         systemctl restart freeswitch
         php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
-        domain_uuid=$(uuidgen)
-        sql_domain="INSERT INTO v_domains (domain_uuid, domain_name, domain_enabled) values('${domain_uuid}', '${domain_name}', 'true');"
+        if [ .$slave = .'1' ]; then
+                echo "Skipping the Domain setup..."
+        else
+                domain_uuid=$(uuidgen)
+                sql_domain="INSERT INTO v_domains (domain_uuid, domain_name, domain_enabled) values('${domain_uuid}', '${domain_name}', 'true');"
 
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_domain}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_domain}"
-                        ;;
-        esac
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_domain}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_domain}"
+                                ;;
+                esac
 
-        default_setting_uuid=$(uuidgen)
-        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'conf', 'dir', '/etc/freeswitch', NULL, 'true', NULL);"
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-                        ;;
-        esac
+                default_setting_uuid=$(uuidgen)
+                sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'conf', 'dir', '/etc/freeswitch', NULL, 'true', NULL);"
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                                ;;
+                esac
 
-        default_setting_uuid=$(uuidgen)
-        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'languages', 'dir', '/etc/freeswitch/languages', NULL, 'true', NULL);"
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-                        ;;
-        esac
+                default_setting_uuid=$(uuidgen)
+                sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'languages', 'dir', '/etc/freeswitch/languages', NULL, 'true', NULL);"
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                                ;;
+                esac
 
-        default_setting_uuid=$(uuidgen)
-        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'scripts', 'dir', '/usr/share/freeswitch/scripts', NULL, 'true', NULL);"
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-                        ;;
-        esac
+                default_setting_uuid=$(uuidgen)
+                sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'scripts', 'dir', '/usr/share/freeswitch/scripts', NULL, 'true', NULL);"
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                                ;;
+                esac
 
-        default_setting_uuid=$(uuidgen)
-        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'recordings', 'dir', '/var/lib/freeswitch/recordings', NULL, 'true', NULL);"
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-                        ;;
-        esac
+                default_setting_uuid=$(uuidgen)
+                sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'recordings', 'dir', '/var/lib/freeswitch/recordings', NULL, 'true', NULL);"
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                                ;;
+                esac
+        
+                default_setting_uuid=$(uuidgen)
+                sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'storage', 'dir', '/var/lib/freeswitch/storage', NULL, 'true', NULL);"
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                                ;;
+                esac
 
-        default_setting_uuid=$(uuidgen)
-        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'storage', 'dir', '/var/lib/freeswitch/storage', NULL, 'true', NULL);"
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-                        ;;
-        esac
-
-        default_setting_uuid=$(uuidgen)
-        sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'voicemail', 'dir', '/var/lib/freeswitch/storage/voicemail', NULL, 'true', NULL);"
-        case "${database_type}" in
-                mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
-                        ;;
-                pgsql)
-                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
-                        ;;
-        esac
-
-        echo 'Upgrading domains...'
-        php /var/www/CoolPBX/core/upgrade/upgrade_domains.php ${shopt}
+                default_setting_uuid=$(uuidgen)
+                sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'voicemail', 'dir', '/var/lib/freeswitch/storage/voicemail', NULL, 'true', NULL);"
+                case "${database_type}" in
+                        mysql|mariadb)
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                ;;
+                        pgsql)
+                                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
+                                ;;
+                esac
+        
+                echo 'Upgrading domains...'
+                php /var/www/CoolPBX/core/upgrade/upgrade_domains.php ${shopt}
+        fi
 popd
 
+if [ .$slave = .'1' ]; then
+        echo "Skipping user setup setup..."
+else
+        user_uuid=$(uuidgen)
+        user_salt=$(uuidgen)
+        password_hash=$(echo -n ${user_salt}${superadmin_password}|md5sum -t | cut -d' ' -f 1)
+        
+        sql_useradmin="INSERT INTO v_users (user_uuid, domain_uuid, username, password, salt, user_enabled) values('${user_uuid}', '${domain_uuid}', '${superadmin}', '${password_hash}', '${user_salt}', 'true');"
+        
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_useradmin}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_useradmin}"
+                        ;;
+        esac
 
-
-user_uuid=$(uuidgen)
-user_salt=$(uuidgen)
-password_hash=$(echo -n ${user_salt}${superadmin_password}|md5sum -t | cut -d' ' -f 1)
-
-sql_useradmin="INSERT INTO v_users (user_uuid, domain_uuid, username, password, salt, user_enabled) values('${user_uuid}', '${domain_uuid}', '${superadmin}', '${password_hash}', '${user_salt}', 'true');"
-
-case "${database_type}" in
-        mysql|mariadb)
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_useradmin}" ${database_name}
-                ;;
-        pgsql)
-                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_useradmin}"
-                ;;
-esac
-
-sql_superadmin_group="SELECT group_uuid FROM v_groups WHERE group_name = 'superadmin';"
-case "${database_type}" in
-        mysql|mariadb)
-                group_uuid=$(mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} -s -N --execute="${sql_superadmin_group}" ${database_name})
-                ;;
-        pgsql)
-                group_uuid=$(PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -t -c "${sql_superadmin_group}")
-                ;;
-esac
-
-group_uuid=$(echo $group_uuid | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
-user_group_uuid=$(uuidgen)
-group_name=superadmin
-sql_user_groups="INSERT INTO v_user_groups (user_group_uuid, domain_uuid, group_name, group_uuid, user_uuid) VALUES('${user_group_uuid}', '${domain_uuid}', '${group_name}', '${group_uuid}', '${user_uuid}');"
-
-case "${database_type}" in
-        mysql|mariadb)
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_user_groups}" ${database_name}
-                ;;
-        pgsql)
-                PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_user_groups}"
-                ;;
-esac
+        sql_superadmin_group="SELECT group_uuid FROM v_groups WHERE group_name = 'superadmin';"
+        case "${database_type}" in
+                mysql|mariadb)
+                        group_uuid=$(mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} -s -N --execute="${sql_superadmin_group}" ${database_name})
+                        ;;
+                pgsql)
+                        group_uuid=$(PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -t -c "${sql_superadmin_group}")
+                        ;;
+        esac
+        
+        group_uuid=$(echo $group_uuid | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//')
+        user_group_uuid=$(uuidgen)
+        group_name=superadmin
+        sql_user_groups="INSERT INTO v_user_groups (user_group_uuid, domain_uuid, group_name, group_uuid, user_uuid) VALUES('${user_group_uuid}', '${domain_uuid}', '${group_name}', '${group_uuid}', '${user_uuid}');"
+        
+        case "${database_type}" in
+                mysql|mariadb)
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_user_groups}" ${database_name}
+                        ;;
+                pgsql)
+                        PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_user_groups}"
+                        ;;
+        esac
+fi
 
 xml_cdr_username=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
 xml_cdr_password=$(dd if=/dev/urandom bs=1 count=12 2>/dev/null | base64 | sed 's/[=\+//]//g')
