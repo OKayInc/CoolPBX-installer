@@ -559,6 +559,7 @@ fi
 
 echo "Setting up CoolPBX..."
 pushd /var/www/CoolPBX
+        systemctl restart freeswitch
         php /var/www/CoolPBX/core/upgrade/upgrade_schema.php ${shopt}
         domain_uuid=$(uuidgen)
         sql_domain="INSERT INTO v_domains (domain_uuid, domain_name, domain_enabled) values('${domain_uuid}', '${domain_name}', 'true');"
