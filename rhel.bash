@@ -495,26 +495,49 @@ case "${database_type}" in
                         echo "Let's not destroy the database"
                 else
                         echo "Creating MariaDB/MySQL database if it doesn't exist..."
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS ${database_name}"
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS freeswitch"
+                        if [ "x$database_admin_username_password" = "x" ]; then
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="CREATE DATABASE IF NOT EXISTS ${database_name}"
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="CREATE DATABASE IF NOT EXISTS freeswitch"
+                        else
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS ${database_name}"
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS freeswitch"
+                        if
                 fi
 
                 echo "Adding MariaDB/MySQL user permissions..."
                 for ip in $(hostname -I)
                 do
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                        if [ "x$database_admin_username_password" = "x" ]; then
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                        else
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${ip}' IDENTIFIED BY '${database_username_password}'"
+                        fi         
                 done
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
-
-                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="FLUSH PRIVILEGES"
+                if [ "x$database_admin_username_password" = "x" ]; then
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+        
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="FLUSH PRIVILEGES"
+                else
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'${database_host}' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'127.0.0.1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'::1' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON freeswitch.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="GRANT ALL PRIVILEGES ON ${database_name}.* TO '${database_username}'@'localhost' IDENTIFIED BY '${database_username_password}'"
+        
+                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="FLUSH PRIVILEGES"
+                fi
                 ;;
         pgsql)
                 if [ .$_is_local_db = '.1' ]; then
@@ -569,7 +592,11 @@ pushd /var/www/CoolPBX
 
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_domain}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_domain}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_domain}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_domain}"
@@ -580,7 +607,11 @@ pushd /var/www/CoolPBX
                 sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'conf', 'dir', '/etc/freeswitch', NULL, 'true', NULL);"
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_switch_conf}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
@@ -591,7 +622,11 @@ pushd /var/www/CoolPBX
                 sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'languages', 'dir', '/etc/freeswitch/languages', NULL, 'true', NULL);"
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_switch_conf}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
@@ -602,7 +637,11 @@ pushd /var/www/CoolPBX
                 sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'scripts', 'dir', '/usr/share/freeswitch/scripts', NULL, 'true', NULL);"
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_switch_conf}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
@@ -613,7 +652,11 @@ pushd /var/www/CoolPBX
                 sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'recordings', 'dir', '/var/lib/freeswitch/recordings', NULL, 'true', NULL);"
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_switch_conf}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
@@ -624,7 +667,11 @@ pushd /var/www/CoolPBX
                 sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'storage', 'dir', '/var/lib/freeswitch/storage', NULL, 'true', NULL);"
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_switch_conf}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
@@ -635,7 +682,11 @@ pushd /var/www/CoolPBX
                 sql_switch_conf="INSERT INTO v_default_settings (default_setting_uuid, app_uuid, default_setting_category, default_setting_subcategory, default_setting_name, default_setting_value, default_setting_order, default_setting_enabled, default_setting_description) VALUES('${default_setting_uuid}', NULL, 'switch', 'voicemail', 'dir', '/var/lib/freeswitch/storage/voicemail', NULL, 'true', NULL);"
                 case "${database_type}" in
                         mysql|mariadb)
-                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                if [ "x$database_admin_username_password" = "x" ]; then
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_switch_conf}" ${database_name}
+                                else
+                                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_switch_conf}" ${database_name}
+                                fi
                                 ;;
                         pgsql)
                                 PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_switch_conf}"
@@ -658,7 +709,11 @@ else
         
         case "${database_type}" in
                 mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_useradmin}" ${database_name}
+                        if [ "x$database_admin_username_password" = "x" ]; then
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_useradmin}" ${database_name}
+                        else
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_useradmin}" ${database_name}
+                        fi
                         ;;
                 pgsql)
                         PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_useradmin}"
@@ -682,7 +737,11 @@ else
         
         case "${database_type}" in
                 mysql|mariadb)
-                        mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_user_groups}" ${database_name}
+                        if [ "x$database_admin_username_password" = "x" ]; then
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --execute="${sql_user_groups}" ${database_name}
+                        else
+                                mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="${sql_user_groups}" ${database_name}
+                        fi
                         ;;
                 pgsql)
                         PGPASSWORD="${database_admin_username_password}" psql --host=${database_host} --port=${database_port}  --username=${database_admin_username} -c "${sql_user_groups}"
