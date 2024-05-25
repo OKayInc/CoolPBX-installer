@@ -501,7 +501,7 @@ case "${database_type}" in
                         else
                                 mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS ${database_name}"
                                 mysql --host=${database_host} --port=${database_port} --user=${database_admin_username} --password=${database_admin_username_password} --execute="CREATE DATABASE IF NOT EXISTS freeswitch"
-                        if
+                        fi
                 fi
 
                 echo "Adding MariaDB/MySQL user permissions..."
