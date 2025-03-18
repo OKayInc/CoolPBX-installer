@@ -1,7 +1,7 @@
 # CoolPBX-installer
-Bash based installer for CoolPBX
+Bash-based installer for CoolPBX. For now only RHEL.
 
-## Instalation
+## Installation
 ```
 wget https://raw.githubusercontent.com/OKayInc/CoolPBX-installer/refs/heads/main/rhel.bash
 chmod +x rhel.bash
